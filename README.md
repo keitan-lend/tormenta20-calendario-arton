@@ -17,7 +17,7 @@ A ideia deste módulo nasceu de olhar o [Seasons-And-Stars-Tormenta20](https://g
 ## Fontes
 
 - **Meses, dias da semana, Dias de Nimb, formato de hora**: capítulo "Tempo & Calendário" do Livro Básico de Tormenta 20. As regras vão até o ano **1420**, que é onde o Livro Básico e o Atlas de Arton encerram a linha do tempo oficial.
-- **Ciclo lunar de Vitália** (fases Escudo, Foice, Treva, Arco): não consta no capítulo do Livro Básico — incluído a pedido do mestre, com base em material de referência do calendário artoniano.
+- **Ciclo lunar de Vitália** (fases Escudo, Foice, Treva, Arco): não consta no capítulo do Livro Básico ou no Altas de Arton — incluído com base em material antigo do Tormenta RPG.
 - **Crônicas de 1420 a 1425** (ascensão de Aharadak, Supremacia Purista, Aslothia, reconstrução do Reinado sob Shivara Sharpblade etc.): Atlas de Arton e material de campanhas/streams oficiais recentes, não do Livro Básico.
 
 O ano padrão para novas campanhas é **1425**, configurável pelo mestre nas configurações do módulo.
@@ -36,16 +36,8 @@ O ano padrão para novas campanhas é **1425**, configurável pelo mestre nas co
 - **Dia da semana do dia 1 de Caravana do ano inicial**: define o "alinhamento" dos dias da semana. Padrão: Valk.
 - **Mostrar fase da lua**: liga/desliga a exibição de Vitália.
 
-## Limitações conhecidas / pontos para testar
-
-Este módulo foi escrito sem acesso a uma instância real do Foundry para testar — a API de `ApplicationV2`/`DialogV2` usada aqui segue a documentação oficial do Foundry v13/v14, mas pode haver ajustes finos necessários (nomes de hooks, classes CSS do core, etc.). Ao instalar:
-
-1. Confira o console do navegador (F12) por erros ao carregar o módulo.
-2. Teste abrir o widget, avançar o tempo e abrir a janela do calendário.
-3. Teste adicionar/editar uma data e uma crônica.
-
-Qualquer erro de console, é só colar o texto — ajusto rapidamente.
+## Considerações
 
 Outras simplificações assumidas de propósito:
 - Anos antes da chegada dos elfos (era "AE") são suportados matematicamente (anos negativos), mas não têm interface dedicada — é um cenário raro de usar em jogo.
-- O acesso ao botão do calendário foi colocado nos controles de "Anotações" da barra lateral de cenas; se o Foundry v14 tiver mudado esse layout, pode ser preciso ajustar `main.js`.
+- O acesso ao botão do calendário foi colocado nos controles de "Anotações" da barra lateral de cenas; se o Foundry mudar esse layout, pode ser preciso ajustar `main.js`.
