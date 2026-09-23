@@ -1,0 +1,188 @@
+.t20cal-mini {
+  background: rgba(20, 15, 10, 0.85);
+  border: 1px solid #a1712f;
+  border-radius: 6px;
+  color: #f0e6d2;
+  font-family: var(--font-primary, sans-serif);
+  padding: 6px 10px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+}
+
+.t20cal-mini__date {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  line-height: 1.3;
+}
+
+.t20cal-mini__date-label {
+  font-weight: bold;
+}
+
+.t20cal-mini__time-label {
+  font-size: 0.85em;
+  opacity: 0.85;
+}
+
+.t20cal-mini__moon {
+  font-size: 0.8em;
+  opacity: 0.8;
+}
+
+.t20cal-mini__controls {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.t20cal-mini__controls button {
+  flex: 1;
+  font-size: 0.75em;
+  padding: 2px 4px;
+}
+
+.t20cal-app {
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.t20cal-app__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.t20cal-app__nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.t20cal-app__nav h2 {
+  margin: 0;
+  min-width: 200px;
+  text-align: center;
+}
+
+.t20cal-app__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-style: italic;
+}
+
+.t20cal-app__current {
+  margin: 0;
+}
+
+.t20cal-app__grid {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.t20cal-app__grid th {
+  font-size: 0.8em;
+  padding: 4px 0;
+  border-bottom: 1px solid #a1712f;
+}
+
+.t20cal-day {
+  height: 46px;
+  vertical-align: top;
+  border: 1px solid #d8c9a3;
+  cursor: pointer;
+  padding: 2px 4px;
+  position: relative;
+}
+
+.t20cal-day:hover {
+  background: rgba(161, 113, 47, 0.15);
+}
+
+.t20cal-day--empty {
+  cursor: default;
+  border-color: transparent;
+}
+
+.t20cal-day--today {
+  background: rgba(161, 113, 47, 0.35);
+  font-weight: bold;
+}
+
+.t20cal-day--event {
+  background: rgba(140, 40, 40, 0.12);
+}
+
+.t20cal-day__number {
+  font-size: 0.9em;
+}
+
+.t20cal-day__marker {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  color: #b93a3a;
+  font-size: 0.75em;
+}
+
+.t20cal-nimb-banner {
+  background: rgba(140, 40, 40, 0.15);
+  border: 1px dashed #b93a3a;
+  border-radius: 4px;
+  padding: 6px 10px;
+}
+
+.t20cal-section__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.t20cal-section__header h3 {
+  margin: 0;
+}
+
+.t20cal-list {
+  list-style: none;
+  margin: 4px 0 0 0;
+  padding: 0;
+}
+
+.t20cal-list li {
+  border-bottom: 1px solid #d8c9a3;
+  padding: 6px 2px;
+}
+
+.t20cal-list li p {
+  margin: 2px 0 0 0;
+  font-size: 0.9em;
+  opacity: 0.9;
+}
+
+.t20cal-list__actions {
+  float: right;
+  display: flex;
+  gap: 8px;
+}
+
+.t20cal-empty {
+  font-style: italic;
+  opacity: 0.7;
+}
+
+.t20cal-form .form-group {
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}

@@ -1,0 +1,37 @@
+{
+  "id": "tormenta20-calendario-arton",
+  "title": "Calendário de Arton (Tormenta 20)",
+  "description": "Calendário, relógio e ciclo lunar de Arton para o sistema Tormenta 20 — módulo independente, sem dependências de outros módulos.",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "14"
+  },
+  "authors": [
+    {
+      "name": "lucashmuniz",
+      "discord": "lucashmuniz"
+    }
+  ],
+  "esmodules": [
+    "scripts/main.js"
+  ],
+  "styles": [
+    "styles/calendario-arton.css"
+  ],
+  "languages": [
+    {
+      "lang": "pt-BR",
+      "name": "Português (Brasil)",
+      "path": "lang/pt-BR.json"
+    }
+  ],
+  "packs": [],
+  "relationships": {},
+  "socket": false,
+  "url": "https://github.com/keitan-lend/tormenta20-calendario-arton",
+  "manifest": "https://raw.githubusercontent.com/keitan-lend/tormenta20-calendario-arton/main/module.json",
+  "download": "https://github.com/keitan-lend/tormenta20-calendario-arton/releases/latest/download/tormenta20-calendario-arton.zip",
+  "readme": "README.md",
+  "bugs": "https://github.com/keitan-lend/tormenta20-calendario-arton/issues"
+}

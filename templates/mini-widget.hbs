@@ -1,0 +1,20 @@
+<div class="t20cal-mini">
+  <button type="button" class="t20cal-mini__date" data-action="openCalendar" title="Abrir calendário completo">
+    <i class="fa-solid fa-calendar-days"></i>
+    <span class="t20cal-mini__date-label">{{dateLabel}}</span>
+    <span class="t20cal-mini__time-label">{{timeLabel}}</span>
+    {{#if date.moon}}
+      <span class="t20cal-mini__moon" title="Vitália: {{date.moon.name}} (dia {{date.moon.dayInPhase}}/{{date.moon.phaseLength}})">
+        🌙 {{date.moon.name}}
+      </span>
+    {{/if}}
+  </button>
+
+  {{#if isGM}}
+    <div class="t20cal-mini__controls">
+      <button type="button" data-action="advance" data-amount="-3600" title="Retroceder 1 hora"><i class="fa-solid fa-backward"></i>1h</button>
+      <button type="button" data-action="advance" data-amount="3600" title="Avançar 1 hora">1h<i class="fa-solid fa-forward"></i></button>
+      <button type="button" data-action="advance" data-amount="86400" title="Avançar 1 dia">1d<i class="fa-solid fa-forward-step"></i></button>
+    </div>
+  {{/if}}
+</div>
