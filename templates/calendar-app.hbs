@@ -1,0 +1,140 @@
+<div class="t20cal-app">
+  <header class="t20cal-app__header">
+    <div class="t20cal-app__nav">
+      <button type="button" data-action="prevMonth"><i class="fa-solid fa-chevron-left"></i></button>
+      <h2>{{monthName}} de {{year}}</h2>
+      <button type="button" data-action="nextMonth"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+    <div class="t20cal-app__meta">
+      <span>{{season}}</span>
+      <button type="button" data-action="today">Hoje</button>
+    </div>
+  </header>
+
+  <p class="t20cal-app__current">
+    Data atual: <strong>{{currentLabel}}</strong> — {{currentTime}}
+    {{#if showMoon}}{{#if currentMoon}} — Vitália em {{currentMoon.name}} (dia {{currentMoon.dayInPhase}}/{{currentMoon.phaseLength}}){{/if}}{{/if}}
+    <br />
+    <span class="t20cal-app__nimb-total">Ano {{currentYear}}: {{currentYearNimbCount}} Dias de Nimb</span>
+  </p>
+
+  <table class="t20cal-app__grid">
+    <thead>
+      <tr>
+        <th>Valk</th><th>Hedryl</th><th>Luna</th><th>Astar</th><th>Dallia</th><th>Haya</th><th>Leen</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each weeks}}
+        <tr>
+          {{#each this}}
+            {{#if this}}
+              <td class="t20cal-day{{#if this.isToday}} t20cal-day--today{{/if}}{{#if this.events.length}} t20cal-day--event{{/if}}"
+                  data-action="selectDay" data-day="{{this.day}}" title="{{#each this.events}}{{this.title}} — {{/each}}">
+                <span class="t20cal-day__number">{{this.day}}</span>
+                {{#if this.events.length}}
+                  <span class="t20cal-day__marker">★</span>
+                {{/if}}
+              </td>
+            {{else}}
+              <td class="t20cal-day t20cal-day--empty"></td>
+            {{/if}}
+          {{/each}}
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+  {{#if showNimbBanner}}
+    <div class="t20cal-nimb-banner">
+      <i class="fa-solid fa-bolt"></i>
+      Neste ano, seguem-se <strong>{{nimbCount}} Dias de Nimb</strong> logo após {{monthName}}.
+    </div>
+  {{/if}}
+
+  <section class="t20cal-section">
+    <div class="t20cal-section__header">
+      <h3>Datas do mês</h3>
+      {{#if isGM}}<button type="button" data-action="addEvent"><i class="fa-solid fa-plus"></i> Novo</button>{{/if}}
+    </div>
+    {{#if monthEvents.length}}
+      <ul class="t20cal-list">
+        {{#each monthEvents}}
+          <li>
+            <strong>{{this.day}} de {{../monthName}} — {{this.title}}</strong>
+            {{#if isGM}}
+              <span class="t20cal-list__actions">
+                <a data-action="editEvent" data-id="{{this.id}}"><i class="fa-solid fa-pen"></i></a>
+                <a data-action="deleteEvent" data-id="{{this.id}}"><i class="fa-solid fa-trash"></i></a>
+              </span>
+            {{/if}}
+            <p>{{this.description}}</p>
+          </li>
+        {{/each}}
+      </ul>
+    {{else}}
+      <p class="t20cal-empty">Nenhuma data especial cadastrada neste mês.</p>
+    {{/if}}
+  </section>
+
+  <section class="t20cal-section">
+    <div class="t20cal-section__header">
+      <h3>Crônicas de {{year}}</h3>
+      {{#if isGM}}<button type="button" data-action="addYearNote"><i class="fa-solid fa-plus"></i> Nova</button>{{/if}}
+    </div>
+    {{#if yearNotes.length}}
+      <ul class="t20cal-list">
+        {{#each yearNotes}}
+          <li>
+            <strong>{{this.title}}</strong>{{#if this.source}} <em>({{this.source}})</em>{{/if}}
+            {{#if isGM}}
+              <span class="t20cal-list__actions">
+                <a data-action="editYearNote" data-id="{{this.id}}"><i class="fa-solid fa-pen"></i></a>
+                <a data-action="deleteYearNote" data-id="{{this.id}}"><i class="fa-solid fa-trash"></i></a>
+              </span>
+            {{/if}}
+            <p>{{this.description}}</p>
+          </li>
+        {{/each}}
+      </ul>
+    {{else}}
+      <p class="t20cal-empty">Nenhuma crônica registrada para este ano.</p>
+    {{/if}}
+  </section>
+
+  {{#if isGM}}
+    <section class="t20cal-section t20cal-gmtools">
+      <h3>Ferramentas do mestre</h3>
+
+      <div class="t20cal-tool-row">
+        <label>Calibrar data atual:</label>
+        <input type="number" name="calYear" value="{{currentYear}}" placeholder="Ano" title="Ano" />
+        <select name="calMonth" title="Mês">
+          {{#each months}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.name}}</option>{{/each}}
+        </select>
+        <input type="number" name="calDay" min="1" max="30" value="1" placeholder="Dia" title="Dia" />
+        <button type="button" data-action="calibrateDate">Calibrar</button>
+      </div>
+
+      <div class="t20cal-tool-row">
+        <label>Definir hora atual:</label>
+        <input type="number" name="setHour" min="0" max="23" value="{{currentHour}}" title="Hora" />
+        <span>:</span>
+        <input type="number" name="setMinute" min="0" max="59" value="{{currentMinute}}" title="Minuto" />
+        <button type="button" data-action="setTimeOfDay">Definir</button>
+      </div>
+
+      <div class="t20cal-tool-row">
+        <label>Avançar/retroceder:</label>
+        <input type="number" name="advanceAmount" min="1" value="1" title="Quantidade" />
+        <select name="advanceUnit" title="Unidade">
+          <option value="hours">Horas</option>
+          <option value="days" selected>Dias</option>
+          <option value="years">Anos</option>
+        </select>
+        <button type="button" data-action="advanceBackward" title="Retroceder"><i class="fa-solid fa-backward"></i></button>
+        <button type="button" data-action="advanceForward" title="Avançar"><i class="fa-solid fa-forward"></i></button>
+      </div>
+    </section>
+  {{/if}}
+</div>
