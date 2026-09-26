@@ -81,6 +81,13 @@ export class MiniWidget extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   async _prepareContext() {
+    const isGM = game.user.isGM;
+    const collapsed = game.settings.get(MODULE_ID, "widgetCollapsed");
+
+    if (!isGM && CalendarApp._isHiddenFromMe()) {
+      return { isGM: false, collapsed, blinded: true };
+    }
+
     const date = TimeEngine.getCurrentDate();
     const nimb = TimeEngine.getNimbInfoForYear(date.year);
     return {
@@ -88,8 +95,8 @@ export class MiniWidget extends HandlebarsApplicationMixin(ApplicationV2) {
       dateLabel: TimeEngine.formatDate(date),
       timeLabel: TimeEngine.formatTime(date),
       nimbCount: nimb.count,
-      isGM: game.user.isGM,
-      collapsed: game.settings.get(MODULE_ID, "widgetCollapsed")
+      isGM,
+      collapsed
     };
   }
 

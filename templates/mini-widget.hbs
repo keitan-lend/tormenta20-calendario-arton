@@ -1,7 +1,7 @@
 <div class="t20cal-mini">
 {{#if collapsed}}
 <button type="button" class="t20cal-mini__tab" data-action="toggleCollapse" title="Abrir Calendário de Arton">
-<i class="fa-solid fa-calendar-days"></i>
+<i class="fa-solid {{#if blinded}}fa-eye-slash{{else}}fa-calendar-days{{/if}}"></i>
 </button>
 {{else}}
 <div class="t20cal-mini__panel">
@@ -9,6 +9,9 @@
 <span><i class="fa-solid fa-calendar-days"></i> Calendário de Arton</span>
 <a class="t20cal-mini__close" data-action="toggleCollapse" title="Recolher"><i class="fa-solid fa-xmark"></i></a>
 </div>
+{{#if blinded}}
+<p class="t20cal-mini__blind"><i class="fa-solid fa-eye-slash"></i> Você perdeu a noção do tempo...</p>
+{{else}}
 <button type="button" class="t20cal-mini__date" data-action="openCalendar" title="Abrir calendário completo">
 <span class="t20cal-mini__date-label">{{dateLabel}}</span>
 <span class="t20cal-mini__time-label">{{timeLabel}}</span>
@@ -25,6 +28,7 @@
 <button type="button" data-action="advance" data-amount="3600" title="Avançar 1 hora">1h <i class="fa-solid fa-forward"></i></button>
 <button type="button" data-action="advance" data-amount="86400" title="Avançar 1 dia">1d <i class="fa-solid fa-forward-step"></i></button>
 </div>
+{{/if}}
 {{/if}}
 </div>
 {{/if}}

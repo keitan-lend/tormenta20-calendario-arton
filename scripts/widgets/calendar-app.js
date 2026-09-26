@@ -3,6 +3,7 @@ import { MONTHS, SEASONS } from "../calendar-data.js";
 import { TimeEngine } from "../time-engine.js";
 import { NotesManager } from "../notes-manager.js";
 import { NimbManager } from "../nimb-manager.js";
+import { MiniWidget } from "./mini-widget.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -44,7 +45,12 @@ export class CalendarApp extends HandlebarsApplicationMixin(ApplicationV2) {
       setTimeOfDay: CalendarApp._onSetTimeOfDay,
       advanceForward: CalendarApp._onAdvanceForward,
       advanceBackward: CalendarApp._onAdvanceBackward,
-      rerollNimb: CalendarApp._onRerollNimb
+      rerollNimb: CalendarApp._onRerollNimb,
+      restoreCanonical: CalendarApp._onRestoreCanonical,
+      toggleEventVisibility: CalendarApp._onToggleEventVisibility,
+      toggleYearNoteVisibility: CalendarApp._onToggleYearNoteVisibility,
+      toggleHiddenFromAll: CalendarApp._onToggleHiddenFromAll,
+      toggleHiddenFromUser: CalendarApp._onToggleHiddenFromUser
     }
   };
 
@@ -72,8 +78,14 @@ export class CalendarApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   async _prepareContext() {
     const isGM = game.user.isGM;
+
+    if (!isGM && CalendarApp._isHiddenFromMe()) {
+      return { isGM: false, blinded: true };
+    }
+
     const monthData = MONTHS.find((m) => m.id === this._viewMonth);
     const current = TimeEngine.getCurrentDate();
+    const allowCanonicalEdit = game.settings.get(MODULE_ID, "allowCanonicalEdit");
 
     const days = [];
     for (let day = 1; day <= 30; day++) {
@@ -83,7 +95,7 @@ export class CalendarApp extends HandlebarsApplicationMixin(ApplicationV2) {
         day,
         weekdayName: info.weekday?.name ?? "",
         isToday: !current.isNimbDay && current.year === this._viewYear && current.month === this._viewMonth && current.day === day,
-        events: NotesManager.getRecurringEventsForDay(this._viewMonth, day)
+        events: NotesManager.getRecurringEventsForDay(this._viewMonth, day, { forPlayers: !isGM })
       });
     }
 
@@ -112,6 +124,25 @@ export class CalendarApp extends HandlebarsApplicationMixin(ApplicationV2) {
       selected: m.id === this._viewMonth
     }));
 
+    const monthEvents = NotesManager.getRecurringEvents()
+      .filter((e) => e.month === this._viewMonth)
+      .filter((e) => isGM || !e.hiddenFromPlayers)
+      .map((e) => ({ ...e, locked: e.builtin && !allowCanonicalEdit }));
+
+    const yearNotes = NotesManager.getYearNotesForYear(this._viewYear)
+      .filter((n) => isGM || !n.hiddenFromPlayers)
+      .map((n) => ({ ...n, locked: n.builtin && !allowCanonicalEdit }));
+
+    const hiddenFromAll = game.settings.get(MODULE_ID, "calendarHiddenFromAll");
+    const hiddenUserIds = game.settings.get(MODULE_ID, "calendarHiddenUserIds") ?? [];
+    const players = isGM
+      ? game.users.filter((u) => !u.isGM).map((u) => ({
+          id: u.id,
+          name: u.name,
+          hidden: hiddenUserIds.includes(u.id)
+        }))
+      : [];
+
     return {
       isGM,
       months,
@@ -131,9 +162,19 @@ export class CalendarApp extends HandlebarsApplicationMixin(ApplicationV2) {
       currentYearNimbCount: TimeEngine.getNimbInfoForYear(current.year).count,
       currentHour: current.hour,
       currentMinute: current.minute,
-      yearNotes: NotesManager.getYearNotesForYear(this._viewYear),
-      monthEvents: NotesManager.getRecurringEvents().filter((e) => e.month === this._viewMonth)
+      yearNotes,
+      monthEvents,
+      allowCanonicalEdit,
+      hiddenFromAll,
+      players
     };
+  }
+
+  /** true se ESTE usuário (não-mestre) está com o calendário oculto agora. */
+  static _isHiddenFromMe() {
+    if (game.settings.get(MODULE_ID, "calendarHiddenFromAll")) return true;
+    const hiddenUserIds = game.settings.get(MODULE_ID, "calendarHiddenUserIds") ?? [];
+    return hiddenUserIds.includes(game.user.id);
   }
 
   static _onPrevMonth() {
@@ -202,8 +243,8 @@ export class CalendarApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const id = target.dataset.id;
     const existing = NotesManager.getRecurringEvents().find((e) => e.id === id);
     if (!existing) return;
-    if (existing.builtin) {
-      ui.notifications?.info("Datas padrão do Livro Básico não podem ser excluídas (podem ser editadas).");
+    if (existing.builtin && !game.settings.get(MODULE_ID, "allowCanonicalEdit")) {
+      ui.notifications?.info("Datas padrão do Livro Básico não podem ser excluídas (ative isso nas configurações do módulo, ou apenas edite/oculte).");
       return;
     }
     const confirmed = await foundry.applications.api.DialogV2.confirm({
@@ -240,8 +281,8 @@ export class CalendarApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const id = target.dataset.id;
     const existing = NotesManager.getYearNotes().find((n) => n.id === id);
     if (!existing) return;
-    if (existing.builtin) {
-      ui.notifications?.info("Crônicas oficiais não podem ser excluídas (podem ser editadas).");
+    if (existing.builtin && !game.settings.get(MODULE_ID, "allowCanonicalEdit")) {
+      ui.notifications?.info("Crônicas oficiais não podem ser excluídas (ative isso nas configurações do módulo, ou apenas edite/oculte).");
       return;
     }
     const confirmed = await foundry.applications.api.DialogV2.confirm({
@@ -262,6 +303,50 @@ export class CalendarApp extends HandlebarsApplicationMixin(ApplicationV2) {
     if (!confirmed) return;
     await NimbManager.regenerate(this._viewYear);
     this.render();
+  }
+
+  static async _onRestoreCanonical() {
+    if (!game.user.isGM) return;
+    const confirmed = await foundry.applications.api.DialogV2.confirm({
+      window: { title: "Restaurar canônicos" },
+      content: `<p>Isso desfaz qualquer edição ou exclusão feita nas datas do Livro Básico e nas crônicas de 1420-1425, voltando todas ao original. Suas datas e crônicas <strong>personalizadas</strong> não são afetadas. Confirmar?</p>`
+    });
+    if (!confirmed) return;
+    await NotesManager.restoreCanonical();
+    this.render();
+  }
+
+  static async _onToggleEventVisibility(event, target) {
+    if (!game.user.isGM) return;
+    event?.preventDefault?.(); event?.stopPropagation?.();
+    await NotesManager.toggleEventVisibility(target.dataset.id);
+    this.render();
+  }
+
+  static async _onToggleYearNoteVisibility(event, target) {
+    if (!game.user.isGM) return;
+    event?.preventDefault?.(); event?.stopPropagation?.();
+    await NotesManager.toggleYearNoteVisibility(target.dataset.id);
+    this.render();
+  }
+
+  static async _onToggleHiddenFromAll(event, target) {
+    if (!game.user.isGM) return;
+    await game.settings.set(MODULE_ID, "calendarHiddenFromAll", !!target.checked);
+    this.render();
+    MiniWidget.refresh();
+  }
+
+  static async _onToggleHiddenFromUser(event, target) {
+    if (!game.user.isGM) return;
+    const userId = target.dataset.userId;
+    const list = foundry.utils.deepClone(game.settings.get(MODULE_ID, "calendarHiddenUserIds") ?? []);
+    const idx = list.indexOf(userId);
+    if (target.checked && idx === -1) list.push(userId);
+    else if (!target.checked && idx !== -1) list.splice(idx, 1);
+    await game.settings.set(MODULE_ID, "calendarHiddenUserIds", list);
+    this.render();
+    MiniWidget.refresh();
   }
 
   static async _onCalibrateDate(event, target) {

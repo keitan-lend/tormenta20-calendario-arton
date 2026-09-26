@@ -48,6 +48,15 @@ export function registerSettings() {
     default: null
   });
 
+  game.settings.register(MODULE_ID, "allowCanonicalEdit", {
+    name: "Permitir editar/excluir eventos e crônicas canônicos",
+    hint: "Por padrão, as datas do Livro Básico e as crônicas de 1420-1425 só podem ser ocultadas dos jogadores, não editadas ou excluídas. Ative se sua mesa altera esses fatos do mundo. Um botão \"Restaurar canônicos\" na janela do calendário desfaz as mudanças (sem afetar suas datas/crônicas personalizadas) a qualquer momento.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   game.settings.register(MODULE_ID, "showMoon", {
     name: "Mostrar fase da lua (Vitália)",
     scope: "world",
@@ -124,5 +133,37 @@ export function registerSettings() {
     config: false,
     type: Boolean,
     default: true
+  });
+
+  // Visibilidade individual de cada evento/crônica para os jogadores
+  // (chave ausente = visível). Independe de ser canônico ou personalizado.
+  game.settings.register(MODULE_ID, "eventVisibility", {
+    scope: "world",
+    config: false,
+    type: Object,
+    default: {}
+  });
+
+  game.settings.register(MODULE_ID, "yearNoteVisibility", {
+    scope: "world",
+    config: false,
+    type: Object,
+    default: {}
+  });
+
+  // Ocultar o calendário inteiro (widget + janela) de todos os jogadores
+  // ou de jogadores específicos — para cenas de "perder a noção do tempo".
+  game.settings.register(MODULE_ID, "calendarHiddenFromAll", {
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register(MODULE_ID, "calendarHiddenUserIds", {
+    scope: "world",
+    config: false,
+    type: Array,
+    default: []
   });
 }

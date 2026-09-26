@@ -1,3 +1,10 @@
+{{#if blinded}}
+  <div class="t20cal-blind">
+    <i class="fa-solid fa-eye-slash"></i>
+    <p>Você perdeu a noção do tempo...</p>
+    <p class="t20cal-blind__hint">O mestre vai revelar a data novamente quando for a hora.</p>
+  </div>
+{{else}}
 <div class="t20cal-app">
   <header class="t20cal-app__header">
     <div class="t20cal-app__nav">
@@ -80,11 +87,15 @@
     {{#if monthEvents.length}}
       <ul class="t20cal-list">
         {{#each monthEvents}}
-          <li>
+          <li class="{{#if this.hiddenFromPlayers}}t20cal-list__item--hidden{{/if}}">
             <strong>{{this.day}} de {{../monthName}} — {{this.title}}</strong>
+            {{#if this.hiddenFromPlayers}}<span class="t20cal-hidden-tag" title="Oculto dos jogadores"><i class="fa-solid fa-eye-slash"></i></span>{{/if}}
             {{#if @root.isGM}}
               <span class="t20cal-list__actions">
-                {{#unless this.builtin}}
+                <a data-action="toggleEventVisibility" data-id="{{this.id}}" title="{{#if this.hiddenFromPlayers}}Revelar aos jogadores{{else}}Ocultar dos jogadores{{/if}}">
+                  <i class="fa-solid {{#if this.hiddenFromPlayers}}fa-eye-slash{{else}}fa-eye{{/if}}"></i>
+                </a>
+                {{#unless this.locked}}
                   <a data-action="editEvent" data-id="{{this.id}}" title="Editar"><i class="fa-solid fa-pen"></i></a>
                   <a data-action="deleteEvent" data-id="{{this.id}}" title="Excluir"><i class="fa-solid fa-trash"></i></a>
                 {{/unless}}
@@ -107,11 +118,15 @@
     {{#if yearNotes.length}}
       <ul class="t20cal-list">
         {{#each yearNotes}}
-          <li>
+          <li class="{{#if this.hiddenFromPlayers}}t20cal-list__item--hidden{{/if}}">
             <strong>{{this.title}}</strong>{{#if this.source}} <em>({{this.source}})</em>{{/if}}
+            {{#if this.hiddenFromPlayers}}<span class="t20cal-hidden-tag" title="Oculta dos jogadores"><i class="fa-solid fa-eye-slash"></i></span>{{/if}}
             {{#if @root.isGM}}
               <span class="t20cal-list__actions">
-                {{#unless this.builtin}}
+                <a data-action="toggleYearNoteVisibility" data-id="{{this.id}}" title="{{#if this.hiddenFromPlayers}}Revelar aos jogadores{{else}}Ocultar dos jogadores{{/if}}">
+                  <i class="fa-solid {{#if this.hiddenFromPlayers}}fa-eye-slash{{else}}fa-eye{{/if}}"></i>
+                </a>
+                {{#unless this.locked}}
                   <a data-action="editYearNote" data-id="{{this.id}}" title="Editar"><i class="fa-solid fa-pen"></i></a>
                   <a data-action="deleteYearNote" data-id="{{this.id}}" title="Excluir"><i class="fa-solid fa-trash"></i></a>
                 {{/unless}}
@@ -166,6 +181,31 @@
           <i class="fa-solid fa-dice"></i> Rerrolar
         </button>
       </div>
+
+      <div class="t20cal-tool-row">
+        <label>Eventos/crônicas canônicos:</label>
+        <button type="button" data-action="restoreCanonical" title="Desfaz edições e exclusões do canônico, sem afetar o personalizado">
+          <i class="fa-solid fa-rotate-left"></i> Restaurar canônicos
+        </button>
+        {{#unless allowCanonicalEdit}}
+          <span class="t20cal-tool-hint">(edição/exclusão do canônico desativada — ative em Configurar Módulos)</span>
+        {{/unless}}
+      </div>
+
+      <div class="t20cal-tool-row t20cal-tool-row--block">
+        <label>Ocultar calendário dos jogadores:</label>
+        <label class="t20cal-checkbox">
+          <input type="checkbox" data-action="toggleHiddenFromAll" {{#if hiddenFromAll}}checked{{/if}} />
+          De todos
+        </label>
+        {{#each players}}
+          <label class="t20cal-checkbox">
+            <input type="checkbox" data-action="toggleHiddenFromUser" data-user-id="{{this.id}}" {{#if this.hidden}}checked{{/if}} {{#if ../hiddenFromAll}}disabled{{/if}} />
+            {{this.name}}
+          </label>
+        {{/each}}
+      </div>
     </section>
   {{/if}}
 </div>
+{{/if}}
