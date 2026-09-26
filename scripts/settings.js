@@ -1,5 +1,6 @@
 import { MODULE_ID } from "./constants.js";
 import { DEFAULT_STARTING_YEAR } from "./calendar-data.js";
+import { MiniWidget } from "./widgets/mini-widget.js";
 
 export function registerSettings() {
   game.settings.register(MODULE_ID, "defaultStartingYear", {
@@ -157,13 +158,15 @@ export function registerSettings() {
     scope: "world",
     config: false,
     type: Boolean,
-    default: false
+    default: false,
+    onChange: () => MiniWidget.applyHiddenState()
   });
 
   game.settings.register(MODULE_ID, "calendarHiddenUserIds", {
     scope: "world",
     config: false,
     type: Array,
-    default: []
+    default: [],
+    onChange: () => MiniWidget.applyHiddenState()
   });
 }

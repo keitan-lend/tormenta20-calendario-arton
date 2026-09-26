@@ -189,6 +189,34 @@ export class MiniWidget extends HandlebarsApplicationMixin(ApplicationV2) {
     this._instance?.render();
   }
 
+  /**
+   * Reage a uma mudança em "calendarHiddenFromAll"/"calendarHiddenUserIds"
+   * NESTE cliente. Chamado via onChange dos settings, então roda em todo
+   * cliente conectado assim que o mestre muda a visibilidade — não só
+   * mostra uma mensagem de "cego", fecha a miniatura de verdade.
+   */
+  static applyHiddenState() {
+    if (game.user.isGM) return;
+
+    if (CalendarApp._isHiddenFromMe()) {
+      this._instance?.close();
+      this._instance = null;
+      CalendarApp._instance?.close();
+      return;
+    }
+
+    // Revelado de novo: só reabre a miniatura se o próprio jogador não
+    // tinha escondido ela manualmente antes (respeita a preferência dele).
+    if (game.settings.get(MODULE_ID, "widgetVisible")) {
+      if (!this._instance) {
+        this._instance = new MiniWidget();
+        this._instance.render({ force: true });
+      } else {
+        this._instance.render();
+      }
+    }
+  }
+
   /** Alterna exibição (chamado pelo botão dos scene controls e pelo /t20cal). */
   static async toggle() {
     const visible = game.settings.get(MODULE_ID, "widgetVisible");

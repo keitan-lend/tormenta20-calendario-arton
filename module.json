@@ -2,7 +2,7 @@
   "id": "tormenta20-calendario-arton",
   "title": "Calendário de Arton (Tormenta 20)",
   "description": "Calendário, relógio e ciclo lunar de Arton para o sistema Tormenta 20 — módulo independente, sem dependências de outros módulos.",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "compatibility": {
     "minimum": "13",
     "verified": "14"
